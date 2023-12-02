@@ -1,6 +1,8 @@
 import subprocess
 
 base = b"""
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/callrbx/aoc23/rust.yml)
+
 # Advent of Code 2023
 
 Rust solves for Advent of Code 2023.
