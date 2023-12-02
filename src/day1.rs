@@ -1,9 +1,4 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader},
-};
 
-use crate::common;
 
 fn extract_digits_from_line(line: &str) -> Option<(char, char)> {
     let digits: Vec<char> = line.chars().filter(|c| c.is_digit(10)).collect();
@@ -14,12 +9,12 @@ fn extract_digits_from_line(line: &str) -> Option<(char, char)> {
     }
 }
 
-fn part1(input: Vec<String>) -> (u64, Vec<u64>) {
-    let results: Vec<u64> = input
+fn part1(input: &Vec<String>) -> (u32, Vec<u32>) {
+    let results: Vec<u32> = input
         .iter()
         .map(|line| {
             if let Some((first_digit, last_digit)) = extract_digits_from_line(&line) {
-                let x: u64 = format!("{}{}", first_digit, last_digit).parse().unwrap();
+                let x: u32 = format!("{}{}", first_digit, last_digit).parse().unwrap();
                 x
             } else {
                 0
@@ -30,7 +25,7 @@ fn part1(input: Vec<String>) -> (u64, Vec<u64>) {
     return (results.iter().sum(), results);
 }
 
-fn part2(input: Vec<String>) -> (u64, Vec<u64>) {
+fn part2(input: &Vec<String>) -> (u32, Vec<u32>) {
     // Account for weird overlap of last/first chars
     // still matches the first digit
     let mapping = [
@@ -56,20 +51,19 @@ fn part2(input: Vec<String>) -> (u64, Vec<u64>) {
         })
         .collect();
 
-    return part1(parsed_lines);
+    return part1(&parsed_lines);
 }
 
-pub fn solve_day() -> io::Result<(String, String)> {
-    let input_file_name: String = common::get_input_file(1);
+pub fn solve_day() -> (u32, u32) {
+    let input = include_str!("../inputs/day1")
+        .lines()
+        .map(|line| line.to_string())
+        .collect();
 
-    let input_file = File::open(input_file_name)?;
-    let reader: BufReader<_> = BufReader::new(input_file);
-    let input = reader.lines().collect::<Result<Vec<_>, _>>().unwrap();
+    let (part1_ans, _) = part1(&input);
+    let (part2_ans, _) = part2(&input);
 
-    let (part1_ans, _) = part1(input.clone());
-    let (part2_ans, _) = part2(input);
-
-    return Ok((part1_ans.to_string(), part2_ans.to_string()));
+    return (part1_ans, part2_ans);
 }
 
 #[cfg(test)]
@@ -90,18 +84,18 @@ mod tests {
 
     #[test]
     fn part1_test() {
-        let (sum, results) = part1(PART1_INPUT.iter().map(|&s| s.into()).collect());
+        let (sum, results) = part1(&PART1_INPUT.iter().map(|&s| s.into()).collect());
 
-        let part1_nums: Vec<u64> = Vec::from([12, 38, 15, 77]);
+        let part1_nums: Vec<u32> = Vec::from([12, 38, 15, 77]);
         assert_eq!(part1_nums, results);
         assert_eq!(142, sum);
     }
 
     #[test]
     fn part2_test() {
-        let (sum, results) = part2(PART2_INPUT.iter().map(|&s| s.into()).collect());
+        let (sum, results) = part2(&PART2_INPUT.iter().map(|&s| s.into()).collect());
 
-        let part2_nums: Vec<u64> = Vec::from([29, 83, 13, 24, 42, 14, 76, 82]);
+        let part2_nums: Vec<u32> = Vec::from([29, 83, 13, 24, 42, 14, 76, 82]);
         assert_eq!(part2_nums, results);
         assert_eq!(281 + 82, sum);
     }

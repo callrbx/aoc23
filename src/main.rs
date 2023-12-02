@@ -1,35 +1,22 @@
-use std::{
-    io,
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 
-use crate::common::print_results;
-
-mod common;
 mod day1;
 mod day2;
 
-fn main() -> io::Result<()> {
+fn main() {
     let mut total_time = Duration::new(0, 0);
+    let day_funcs = Vec::from([day1::solve_day, day2::solve_day]);
 
-    // day1
-    let start_time = Instant::now();
-    let (d1p1, d1p2) = day1::solve_day()?;
-    let elapsed = Instant::now() - start_time;
-    total_time += elapsed;
-    println!("Day 1 Solve Time: {}us", elapsed.as_micros());
-    print_results(1, d1p1, d1p2);
-
-    // day2
-    let start_time = Instant::now();
-    let (d2p1, d2p2) = day2::solve_day()?;
-    let elapsed = Instant::now() - start_time;
-    total_time += elapsed;
-    println!("Day 2 Solve Time: {}us", elapsed.as_micros());
-    print_results(2, d2p1, d2p2);
+    for (day, solve_fn) in day_funcs.iter().enumerate() {
+        let start_time = Instant::now();
+        let (p1, p2) = solve_fn();
+        let elapsed = Instant::now() - start_time;
+        total_time += elapsed;
+        println!("Day {:02} Part1: {}", day + 1, p1);
+        println!("Day {:02} Part2: {}", day + 1, p2);
+        println!("Day {:02} Time : {}us\n", day + 1, elapsed.as_micros());
+    }
 
     // total time
     println!("Total Solve Time: {}us", total_time.as_micros());
-
-    return Ok(());
 }

@@ -1,10 +1,4 @@
-use std::{
-    cmp,
-    fs::File,
-    io::{self, BufRead, BufReader},
-};
-
-use crate::common;
+use std::cmp;
 
 const CUBE_CONFIG: (u32, u32, u32) = (12, 13, 14);
 
@@ -34,9 +28,9 @@ impl Game {
                 if let Some((amt, col)) = config.trim().split_once(" ") {
                     let num: u32 = amt.parse().expect("Invalid Ball Amount");
                     match col {
-                        "red" => cv.0 += num,
-                        "green" => cv.1 += num,
-                        "blue" => cv.2 += num,
+                        "red" => cv.0 = num,
+                        "green" => cv.1 = num,
+                        "blue" => cv.2 = num,
                         _ => {}
                     }
                 }
@@ -50,9 +44,7 @@ impl Game {
             );
 
             // do not revalidate an invalid game
-            if ng.valid {
-                ng.valid = cv.0 <= CUBE_CONFIG.0 && cv.1 <= CUBE_CONFIG.1 && cv.2 <= CUBE_CONFIG.2;
-            }
+            ng.valid &= cv.0 <= CUBE_CONFIG.0 && cv.1 <= CUBE_CONFIG.1 && cv.2 <= CUBE_CONFIG.2;
         }
 
         ng.power = ng.mins.0 * ng.mins.1 * ng.mins.2;
@@ -61,7 +53,7 @@ impl Game {
     }
 }
 
-fn part1(input: Vec<String>) -> u32 {
+fn part1(input: &Vec<String>) -> u32 {
     return input
         .iter()
         .map(|game| Game::new(game.to_string()))
@@ -70,7 +62,7 @@ fn part1(input: Vec<String>) -> u32 {
         .sum();
 }
 
-fn part2(input: Vec<String>) -> u32 {
+fn part2(input: &Vec<String>) -> u32 {
     return input
         .iter()
         .map(|game| Game::new(game.to_string()))
@@ -78,17 +70,16 @@ fn part2(input: Vec<String>) -> u32 {
         .sum();
 }
 
-pub fn solve_day() -> io::Result<(String, String)> {
-    let input_file_name: String = common::get_input_file(2);
+pub fn solve_day() -> (u32, u32) {
+    let input = include_str!("../inputs/day2")
+        .lines()
+        .map(|line| line.to_string())
+        .collect();
 
-    let input_file = File::open(input_file_name)?;
-    let reader: BufReader<_> = BufReader::new(input_file);
-    let input = reader.lines().collect::<Result<Vec<_>, _>>().unwrap();
+    let part1_ans = part1(&input);
+    let part2_ans = part2(&input);
 
-    let part1_ans = part1(input.clone());
-    let part2_ans = part2(input);
-
-    return Ok((part1_ans.to_string(), part2_ans.to_string()));
+    return (part1_ans, part2_ans);
 }
 
 #[cfg(test)]
@@ -105,14 +96,14 @@ mod tests {
 
     #[test]
     fn part1_test() {
-        let sum = part1(INPUT.iter().map(|&s| s.into()).collect());
+        let sum = part1(&INPUT.iter().map(|&s| s.into()).collect());
 
         assert_eq!(8, sum);
     }
 
     #[test]
     fn part2_test() {
-        let sum = part2(INPUT.iter().map(|&s| s.into()).collect());
+        let sum = part2(&INPUT.iter().map(|&s| s.into()).collect());
 
         assert_eq!(2286, sum);
     }

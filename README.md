@@ -12,13 +12,13 @@ Feel free to use as you see fit.
 
 ## Output
 ```
-Day 1 Solve Time: 1203us
-Day 1 Part 1: 54605
-Day 1 Part 2: 55429
+Day 01 Part1: 54605
+Day 01 Part2: 55429
+Day 01 Time : 1210us
 
-Day 2 Solve Time: 178us
-Day 2 Part 1: 2283
-Day 2 Part 2: 78669
+Day 02 Part1: 2283
+Day 02 Part2: 78669
+Day 02 Time : 198us
 
-Total Solve Time: 1382us
+Total Solve Time: 1409us
 ```
