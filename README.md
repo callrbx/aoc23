@@ -16,11 +16,15 @@ Feel free to use as you see fit.
 ```
 Day 01 Part1: 54605
 Day 01 Part2: 55429
-Day 01 Time : 1198us
+Day 01 Time : 1189us
 
 Day 02 Part1: 2283
 Day 02 Part2: 78669
-Day 02 Time : 178us
+Day 02 Time : 194us
 
-Total Solve Time: 1377us
+Day 03 Part1: 543867
+Day 03 Part2: 79613331
+Day 03 Time : 376us
+
+Total Solve Time: 1760us
 ```
