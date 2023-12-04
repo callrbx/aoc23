@@ -1,7 +1,5 @@
 #[derive(Clone)]
 struct Card {
-    winning: Vec<u32>,
-    showing: Vec<u32>,
     matches: u32,
     value: u32,
 }
@@ -9,35 +7,33 @@ struct Card {
 impl Card {
     pub fn new(line: String) -> Self {
         let (_, rem) = line.split_once(":").expect("Wrong card format");
-        let (winning, showing) = rem.split_once("|").expect("Wring number format");
+        let (winning_str, showing_str) = rem.split_once("|").expect("Wrong number format");
 
-        let mut new_card = Card {
-            winning: winning
-                .split_ascii_whitespace()
-                .into_iter()
-                .map(|n| n.parse().expect("parse fail"))
-                .collect(),
-            showing: showing
-                .split_ascii_whitespace()
-                .into_iter()
-                .map(|n| n.parse().expect("parse fail"))
-                .collect(),
-            matches: 0,
-            value: 0,
-        };
+        let winning = winning_str
+            .split_ascii_whitespace()
+            .map(|n| n.parse::<u32>().map_err(|_| "parse fail"))
+            .collect::<Result<Vec<_>, _>>()
+            .unwrap();
+        let showing = showing_str
+            .split_ascii_whitespace()
+            .map(|n| n.parse::<u32>().map_err(|_| "parse fail"))
+            .collect::<Result<Vec<_>, _>>()
+            .unwrap();
 
-        for x in &new_card.showing {
-            if new_card.winning.contains(&x) {
-                new_card.matches += 1;
-                if new_card.value == 0 {
-                    new_card.value = 1;
-                } else {
-                    new_card.value *= 2;
+        let mut matches = 0;
+        let mut value = 0;
+
+        for x in &showing {
+            if winning.contains(x) {
+                matches += 1;
+                value <<= 1; // equivalent to doubling
+                if value == 0 {
+                    value = 1;
                 }
             }
         }
 
-        return new_card;
+        return Card { matches, value };
     }
 }
 

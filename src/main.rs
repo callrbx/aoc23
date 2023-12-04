@@ -26,4 +26,8 @@ fn main() {
 
     // total time
     println!("Total Solve Time: {}s", total_time.as_secs_f64());
+    println!(
+        "Average Solve Time: {}s",
+        total_time.as_secs_f64() / day_funcs.len() as f64
+    );
 }
