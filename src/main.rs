@@ -3,10 +3,16 @@ use std::time::{Duration, Instant};
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn main() {
     let mut total_time = Duration::new(0, 0);
-    let day_funcs = Vec::from([day1::solve_day, day2::solve_day, day3::solve_day]);
+    let day_funcs = Vec::from([
+        day1::solve_day,
+        day2::solve_day,
+        day3::solve_day,
+        day4::solve_day,
+    ]);
 
     for (day, solve_fn) in day_funcs.iter().enumerate() {
         let start_time = Instant::now();
@@ -19,5 +25,5 @@ fn main() {
     }
 
     // total time
-    println!("Total Solve Time: {}us", total_time.as_micros());
+    println!("Total Solve Time: {}s", total_time.as_secs_f64());
 }
