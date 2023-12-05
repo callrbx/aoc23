@@ -4,6 +4,7 @@ mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 fn main() {
     let mut total_time = Duration::new(0, 0);
@@ -12,6 +13,7 @@ fn main() {
         day2::solve_day,
         day3::solve_day,
         day4::solve_day,
+        day5::solve_day,
     ]);
 
     for (day, solve_fn) in day_funcs.iter().enumerate() {
