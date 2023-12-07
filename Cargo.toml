@@ -9,6 +9,6 @@ lto = false
 opt-level = 3
 
 [dependencies]
-rayon = "*"
+structopt = "*"
 
 
