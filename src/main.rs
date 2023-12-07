@@ -1,4 +1,5 @@
 use std::time::{Duration, Instant};
+use structopt::{self, StructOpt};
 
 pub enum ReturnSize {
     U32((u32, u32)),
@@ -13,6 +14,13 @@ mod day4;
 mod day5;
 mod day6;
 
+#[derive(Debug, StructOpt)]
+#[structopt(name = "AoC 2023", about = "Solver for Advent of Code 2023 Challenges")]
+struct Opt {
+    #[structopt(short, long)]
+    day: Option<usize>,
+}
+
 fn main() {
     let mut total_time = Duration::new(0, 0);
     let day_funcs = Vec::from([
@@ -20,36 +28,46 @@ fn main() {
         day2::solve_day,
         day3::solve_day,
         day4::solve_day,
-        //day5::solve_day,
+        day5::solve_day,
         day6::solve_day,
     ]);
 
-    for (day, solve_fn) in day_funcs.iter().enumerate() {
+    let opt = Opt::from_args();
+
+    let (days_to_run, mut day) = match opt.day {
+        Some(day) => (vec![day_funcs[day - 1]], day),
+        None => (day_funcs, 1),
+    };
+
+    for solve_fn in days_to_run.iter() {
         let start_time = Instant::now();
-        match solve_fn() {
+        let answer = solve_fn();
+        let elapsed: Duration = Instant::now() - start_time;
+
+        match answer {
             ReturnSize::U32(ans) => {
-                println!("Day {:02} Part1: {}", day + 1, ans.0);
-                println!("Day {:02} Part2: {}", day + 1, ans.1);
+                println!("Day {:02} Part 1: {}", day, ans.0);
+                println!("Day {:02} Part 2: {}", day, ans.1);
             }
             ReturnSize::U128(ans) => {
-                println!("Day {:02} Part1: {}", day + 1, ans.0);
-                println!("Day {:02} Part2: {}", day + 1, ans.1);
+                println!("Day {:02} Part 1: {}", day, ans.0);
+                println!("Day {:02} Part 2: {}", day, ans.1);
             }
             ReturnSize::Str(ans) => {
-                println!("Day {:02} Part1: {}", day + 1, ans.0);
-                println!("Day {:02} Part2: {}", day + 1, ans.1);
+                println!("Day {:02} Part 1: {}", day, ans.0);
+                println!("Day {:02} Part 2: {}", day, ans.1);
             }
         }
-        let elapsed = Instant::now() - start_time;
         total_time += elapsed;
 
-        println!("Day {:02} Time : {}us\n", day + 1, elapsed.as_micros());
+        println!("Day {:02} Time D: {}us\n", day, elapsed.as_micros());
+        day += 1;
     }
 
     // total time
     println!("Total Solve Time: {}s", total_time.as_secs_f64());
     println!(
         "Average Solve Time: {}s",
-        total_time.as_secs_f64() / day_funcs.len() as f64
+        total_time.as_secs_f64() / days_to_run.len() as f64
     );
 }

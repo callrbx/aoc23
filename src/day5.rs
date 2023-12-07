@@ -1,41 +1,79 @@
-use rayon::prelude::*;
-use std::collections::HashMap;
-use std::ops::RangeInclusive;
+use std::cmp::min;
 
 use crate::ReturnSize;
 
-fn parse_map(section: &str) -> HashMap<RangeInclusive<usize>, usize> {
+fn parse_map(section: &str) -> Vec<(i64, i64, i64)> {
     section
         .lines()
         .skip(1)
         .filter_map(|line| {
             let mut parts = line.split_whitespace();
-            let dst: usize = parts.next()?.parse().ok()?;
-            let src: usize = parts.next()?.parse().ok()?;
-            let n: usize = parts.next()?.parse().ok()?;
-            Some((src..=src + n, dst))
+            let dest_start: i64 = parts.next()?.parse().ok()?;
+            let source_start: i64 = parts.next()?.parse().ok()?;
+            let length: i64 = parts.next()?.parse().ok()?;
+            Some((dest_start, source_start, length))
         })
         .collect()
 }
 
-fn trace_seed(seed: usize, maps: &[HashMap<RangeInclusive<usize>, usize>]) -> usize {
-    let mut current_value = seed;
-    for map in maps {
-        if let Some((range, &start_dst)) = map
-            .iter()
-            .find(|&(range, _)| range.contains(&current_value))
-        {
-            let offset = current_value - *range.start();
-            current_value = start_dst + offset;
+fn map_number(num: i64, mapping: &Vec<(i64, i64, i64)>) -> i64 {
+    for &(dest_start, source_start, length) in mapping {
+        if num >= source_start && num < source_start + length {
+            return dest_start + (num - source_start);
         }
     }
+    num
+}
+
+fn trace_seed(seed: i64, mappings: &Vec<Vec<(i64, i64, i64)>>) -> i64 {
+    let mut current_value = seed;
+    for mapping in mappings {
+        current_value = map_number(current_value, mapping);
+    }
     current_value
+}
+
+fn remap(lo: i64, hi: i64, m: &Vec<(i64, i64, i64)>) -> Vec<(i64, i64)> {
+    let mut ans = Vec::new();
+
+    for &(dst, src, r) in m.iter() {
+        let end = src + r - 1;
+        let d = dst - src; // How much is this range shifted
+        if !(end < lo || src > hi) {
+            ans.push((std::cmp::max(src, lo), std::cmp::min(end, hi), d));
+        }
+    }
+
+    let mut result = Vec::new();
+
+    for i in 0..ans.len() {
+        let (l, r, d) = ans[i];
+        result.push((l + d, r + d));
+
+        if i < ans.len() - 1 && ans[i + 1].0 > r + 1 {
+            result.push((r + 1, ans[i + 1].0 - 1));
+        }
+    }
+
+    // Handle end and start ranges
+    if ans.is_empty() {
+        result.push((lo, hi));
+    } else {
+        if ans[0].0 != lo {
+            result.push((lo, ans[0].0 - 1));
+        }
+        if ans.last().unwrap().1 != hi {
+            result.push((ans.last().unwrap().1 + 1, hi));
+        }
+    }
+
+    result
 }
 
 fn part1_2(input: &str) -> (u32, u32) {
     let sections: Vec<&str> = input.split("\n\n").collect();
 
-    let seeds: Vec<usize> = sections[0]
+    let seeds: Vec<i64> = sections[0]
         .split(": ")
         .nth(1)
         .unwrap()
@@ -44,10 +82,12 @@ fn part1_2(input: &str) -> (u32, u32) {
         .collect();
 
     // part 2 seeds ranges
-    let mut seeds_range: Vec<usize> = (seeds[0]..=(seeds[0] + seeds[1] - 1)).collect();
-    seeds_range.extend(seeds[2]..=(seeds[2] + seeds[3] - 1));
+    let seed_ranges = vec![
+        (seeds[0], (seeds[0] + seeds[1] - 1)),
+        (seeds[2], (seeds[3] + seeds[2] - 1)),
+    ];
 
-    let maps = [
+    let maps = vec![
         parse_map(sections[1]),
         parse_map(sections[2]),
         parse_map(sections[3]),
@@ -58,17 +98,29 @@ fn part1_2(input: &str) -> (u32, u32) {
     ];
 
     let p1 = seeds
-        .into_par_iter()
-        .map(|seed| trace_seed(seed, &maps))
+        .iter()
+        .map(|seed| trace_seed(*seed, &maps))
         .min()
         .unwrap_or(0);
 
-    // could probably do something fancy with combining ranges, but just throw cores at it
-    let p2 = seeds_range
-        .into_par_iter()
-        .map(|seed| trace_seed(seed, &maps))
-        .min()
-        .unwrap_or(0);
+    // part 2 - need signed math for range wrapping reasons
+    let mut p2 = i64::MAX;
+    for seed_range in seed_ranges.iter() {
+        let mut cur_ranges = vec![*seed_range];
+        let mut new_ranges;
+
+        for m in maps.iter() {
+            new_ranges = Vec::new();
+            for &(lo, hi) in cur_ranges.iter() {
+                new_ranges.extend(remap(lo, hi, m));
+            }
+            cur_ranges = new_ranges.clone();
+        }
+
+        for (lo, _) in cur_ranges {
+            p2 = min(p2, lo);
+        }
+    }
 
     return (p1 as u32, p2 as u32);
 }
