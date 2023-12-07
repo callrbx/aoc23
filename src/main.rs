@@ -77,9 +77,9 @@ fn main() {
     }
 
     // total time
-    println!("Total Solve Time: {}s", total_time.as_secs_f64());
+    println!("Total Solve Time: {:.5}s", total_time.as_secs_f64());
     println!(
-        "Average Solve Time: {}s",
+        "Average Solve Time: {:.5}s",
         total_time.as_secs_f64() / days_to_run.len() as f64
     );
 }

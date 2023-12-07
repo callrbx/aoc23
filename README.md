@@ -16,32 +16,32 @@ Feel free to use as you see fit.
 ```
 Day 01 Part 1: 54605
 Day 01 Part 2: 55429
-Day 01 Time D: 1173us
+Day 01 Time D: 1152us
 
 Day 02 Part 1: 2283
 Day 02 Part 2: 78669
-Day 02 Time D: 172us
+Day 02 Time D: 183us
 
 Day 03 Part 1: 543867
 Day 03 Part 2: 79613331
-Day 03 Time D: 390us
+Day 03 Time D: 403us
 
 Day 04 Part 1: 21088
 Day 04 Part 2: 6874754
-Day 04 Time D: 6399us
+Day 04 Time D: 6386us
 
 Day 05 Part 1: 1414626613
 Day 05 Part 2: 104070862
-Day 05 Time D: 50us
+Day 05 Time D: 52us
 
 Day 06 Part 1: 440000
 Day 06 Part 2: 26187338
-Day 06 Time D: 46333us
+Day 06 Time D: 46154us
 
 Day 07 Part 1: 245794640
 Day 07 Part 2: 247899149
-Day 07 Time D: 983us
+Day 07 Time D: 971us
 
-Total Solve Time: 0.055502372s
-Average Solve Time: 0.007928910285714286s
+Total Solve Time: 0.05531s
+Average Solve Time: 0.00790s
 ```
