@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use crate::ReturnSize;
+
 fn extract_number(s: &str, idx: usize) -> Option<u32> {
     let bytes = s.as_bytes();
 
@@ -135,13 +137,13 @@ fn part1_2(input: Vec<String>) -> (u32, u32) {
     return (found.iter().sum(), ratio);
 }
 
-pub fn solve_day() -> (u32, u32) {
+pub fn solve_day() -> ReturnSize {
     let input: Vec<String> = include_str!("../inputs/day3")
         .lines()
         .map(|line| line.to_string())
         .collect();
 
-    return part1_2(input);
+    return ReturnSize::U32(part1_2(input));
 }
 
 #[cfg(test)]

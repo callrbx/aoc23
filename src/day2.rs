@@ -1,5 +1,7 @@
 use std::cmp;
 
+use crate::ReturnSize;
+
 const CUBE_CONFIG: (u32, u32, u32) = (12, 13, 14);
 
 struct Game {
@@ -70,7 +72,7 @@ fn part2(input: &Vec<String>) -> u32 {
         .sum();
 }
 
-pub fn solve_day() -> (u32, u32) {
+pub fn solve_day() -> ReturnSize {
     let input = include_str!("../inputs/day2")
         .lines()
         .map(|line| line.to_string())
@@ -79,7 +81,7 @@ pub fn solve_day() -> (u32, u32) {
     let part1_ans = part1(&input);
     let part2_ans = part2(&input);
 
-    return (part1_ans, part2_ans);
+    return ReturnSize::U32((part1_ans, part2_ans));
 }
 
 #[cfg(test)]

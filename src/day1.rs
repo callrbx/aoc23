@@ -1,4 +1,4 @@
-
+use crate::ReturnSize;
 
 fn extract_digits_from_line(line: &str) -> Option<(char, char)> {
     let digits: Vec<char> = line.chars().filter(|c| c.is_digit(10)).collect();
@@ -9,7 +9,7 @@ fn extract_digits_from_line(line: &str) -> Option<(char, char)> {
     }
 }
 
-fn part1(input: &Vec<String>) -> (u32, Vec<u32>) {
+fn part1(input: &Vec<String>) -> u32 {
     let results: Vec<u32> = input
         .iter()
         .map(|line| {
@@ -22,10 +22,10 @@ fn part1(input: &Vec<String>) -> (u32, Vec<u32>) {
         })
         .collect();
 
-    return (results.iter().sum(), results);
+    return results.iter().sum();
 }
 
-fn part2(input: &Vec<String>) -> (u32, Vec<u32>) {
+fn part2(input: &Vec<String>) -> u32 {
     // Account for weird overlap of last/first chars
     // still matches the first digit
     let mapping = [
@@ -54,16 +54,13 @@ fn part2(input: &Vec<String>) -> (u32, Vec<u32>) {
     return part1(&parsed_lines);
 }
 
-pub fn solve_day() -> (u32, u32) {
+pub fn solve_day() -> ReturnSize {
     let input = include_str!("../inputs/day1")
         .lines()
         .map(|line| line.to_string())
         .collect();
 
-    let (part1_ans, _) = part1(&input);
-    let (part2_ans, _) = part2(&input);
-
-    return (part1_ans, part2_ans);
+    return ReturnSize::U32((part1(&input), part2(&input)));
 }
 
 #[cfg(test)]
@@ -84,19 +81,14 @@ mod tests {
 
     #[test]
     fn part1_test() {
-        let (sum, results) = part1(&PART1_INPUT.iter().map(|&s| s.into()).collect());
-
-        let part1_nums: Vec<u32> = Vec::from([12, 38, 15, 77]);
-        assert_eq!(part1_nums, results);
-        assert_eq!(142, sum);
+        assert_eq!(142, part1(&PART1_INPUT.iter().map(|&s| s.into()).collect()));
     }
 
     #[test]
     fn part2_test() {
-        let (sum, results) = part2(&PART2_INPUT.iter().map(|&s| s.into()).collect());
-
-        let part2_nums: Vec<u32> = Vec::from([29, 83, 13, 24, 42, 14, 76, 82]);
-        assert_eq!(part2_nums, results);
-        assert_eq!(281 + 82, sum);
+        assert_eq!(
+            281 + 82,
+            part2(&PART2_INPUT.iter().map(|&s| s.into()).collect())
+        );
     }
 }
