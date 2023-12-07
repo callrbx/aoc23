@@ -4,6 +4,7 @@ use structopt::{self, StructOpt};
 pub enum ReturnSize {
     U32((u32, u32)),
     I64((i64, i64)),
+    USIZE((usize, usize)),
     U128((u128, u128)),
     Str((String, String)),
 }
@@ -14,6 +15,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "AoC 2023", about = "Solver for Advent of Code 2023 Challenges")]
@@ -31,6 +33,7 @@ fn main() {
         day4::solve_day,
         day5::solve_day,
         day6::solve_day,
+        day7::solve_day,
     ]);
 
     let opt = Opt::from_args();
@@ -59,6 +62,10 @@ fn main() {
                 println!("Day {:02} Part 2: {}", day, ans.1);
             }
             ReturnSize::Str(ans) => {
+                println!("Day {:02} Part 1: {}", day, ans.0);
+                println!("Day {:02} Part 2: {}", day, ans.1);
+            }
+            ReturnSize::USIZE(ans) => {
                 println!("Day {:02} Part 1: {}", day, ans.0);
                 println!("Day {:02} Part 2: {}", day, ans.1);
             }
