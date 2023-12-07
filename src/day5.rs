@@ -38,7 +38,7 @@ fn remap(lo: i64, hi: i64, m: &Vec<(i64, i64, i64)>) -> Vec<(i64, i64)> {
 
     for &(dst, src, r) in m.iter() {
         let end = src + r - 1;
-        let d = dst - src; // How much is this range shifted
+        let d = dst - src; // range shift distance
         if !(end < lo || src > hi) {
             ans.push((std::cmp::max(src, lo), std::cmp::min(end, hi), d));
         }
@@ -55,7 +55,7 @@ fn remap(lo: i64, hi: i64, m: &Vec<(i64, i64, i64)>) -> Vec<(i64, i64)> {
         }
     }
 
-    // Handle end and start ranges
+    // handle start and end
     if ans.is_empty() {
         result.push((lo, hi));
     } else {
