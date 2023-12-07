@@ -3,6 +3,7 @@ use structopt::{self, StructOpt};
 
 pub enum ReturnSize {
     U32((u32, u32)),
+    I64((i64, i64)),
     U128((u128, u128)),
     Str((String, String)),
 }
@@ -46,6 +47,10 @@ fn main() {
 
         match answer {
             ReturnSize::U32(ans) => {
+                println!("Day {:02} Part 1: {}", day, ans.0);
+                println!("Day {:02} Part 2: {}", day, ans.1);
+            }
+            ReturnSize::I64(ans) => {
                 println!("Day {:02} Part 1: {}", day, ans.0);
                 println!("Day {:02} Part 2: {}", day, ans.1);
             }

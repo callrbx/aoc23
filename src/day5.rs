@@ -2,20 +2,8 @@ use std::cmp::min;
 
 use crate::ReturnSize;
 
-fn parse_map(section: &str) -> Vec<(i64, i64, i64)> {
-    section
-        .lines()
-        .skip(1)
-        .filter_map(|line| {
-            let mut parts = line.split_whitespace();
-            let dest_start: i64 = parts.next()?.parse().ok()?;
-            let source_start: i64 = parts.next()?.parse().ok()?;
-            let length: i64 = parts.next()?.parse().ok()?;
-            Some((dest_start, source_start, length))
-        })
-        .collect()
-}
-
+// obvious approach - fast for p1, slow for p2
+/*
 fn map_number(num: i64, mapping: &Vec<(i64, i64, i64)>) -> i64 {
     for &(dest_start, source_start, length) in mapping {
         if num >= source_start && num < source_start + length {
@@ -31,6 +19,21 @@ fn trace_seed(seed: i64, mappings: &Vec<Vec<(i64, i64, i64)>>) -> i64 {
         current_value = map_number(current_value, mapping);
     }
     current_value
+}
+*/
+
+fn parse_map(section: &str) -> Vec<(i64, i64, i64)> {
+    section
+        .lines()
+        .skip(1)
+        .filter_map(|line| {
+            let mut parts = line.split_whitespace();
+            let dest_start: i64 = parts.next()?.parse().ok()?;
+            let source_start: i64 = parts.next()?.parse().ok()?;
+            let length: i64 = parts.next()?.parse().ok()?;
+            Some((dest_start, source_start, length))
+        })
+        .collect()
 }
 
 fn remap(lo: i64, hi: i64, m: &Vec<(i64, i64, i64)>) -> Vec<(i64, i64)> {
@@ -70,7 +73,7 @@ fn remap(lo: i64, hi: i64, m: &Vec<(i64, i64, i64)>) -> Vec<(i64, i64)> {
     result
 }
 
-fn part1_2(input: &str) -> (u32, u32) {
+fn part1_2(input: &str) -> (i64, i64) {
     let sections: Vec<&str> = input.split("\n\n").collect();
 
     let seeds: Vec<i64> = sections[0]
@@ -81,8 +84,16 @@ fn part1_2(input: &str) -> (u32, u32) {
         .map(|n| n.parse().unwrap())
         .collect();
 
+    // convert initial seeds to seed ranges for p2 approach
+    let seed_ranges_p1 = vec![
+        (seeds[0], (seeds[0])),
+        (seeds[1], (seeds[1])),
+        (seeds[2], (seeds[2])),
+        (seeds[3], (seeds[3])),
+    ];
+
     // part 2 seeds ranges
-    let seed_ranges = vec![
+    let seed_ranges_p2 = vec![
         (seeds[0], (seeds[0] + seeds[1] - 1)),
         (seeds[2], (seeds[3] + seeds[2] - 1)),
     ];
@@ -97,15 +108,27 @@ fn part1_2(input: &str) -> (u32, u32) {
         parse_map(sections[7]),
     ];
 
-    let p1 = seeds
-        .iter()
-        .map(|seed| trace_seed(*seed, &maps))
-        .min()
-        .unwrap_or(0);
+    let mut p1 = i64::MAX;
+    for seed_range in seed_ranges_p1.iter() {
+        let mut cur_ranges = vec![*seed_range];
+        let mut new_ranges;
+
+        for m in maps.iter() {
+            new_ranges = Vec::new();
+            for &(lo, hi) in cur_ranges.iter() {
+                new_ranges.extend(remap(lo, hi, m));
+            }
+            cur_ranges = new_ranges.clone();
+        }
+
+        for (lo, _) in cur_ranges {
+            p1 = min(p1, lo);
+        }
+    }
 
     // part 2 - need signed math for range wrapping reasons
     let mut p2 = i64::MAX;
-    for seed_range in seed_ranges.iter() {
+    for seed_range in seed_ranges_p2.iter() {
         let mut cur_ranges = vec![*seed_range];
         let mut new_ranges;
 
@@ -122,13 +145,13 @@ fn part1_2(input: &str) -> (u32, u32) {
         }
     }
 
-    return (p1 as u32, p2 as u32);
+    return (p1, p2);
 }
 
 pub fn solve_day() -> ReturnSize {
     let input = include_str!("../inputs/day5");
 
-    return ReturnSize::U32(part1_2(&input));
+    return ReturnSize::I64(part1_2(&input));
 }
 
 #[cfg(test)]
