@@ -11,6 +11,7 @@ pub enum ReturnSize {
 
 mod day1;
 mod day10;
+mod day11;
 mod day2;
 mod day3;
 mod day4;
@@ -40,6 +41,7 @@ fn main() {
         day8::solve_day,
         day9::solve_day,
         day10::solve_day,
+        day11::solve_day,
     ]);
 
     let opt = Opt::from_args();
