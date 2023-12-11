@@ -17,6 +17,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "AoC 2023", about = "Solver for Advent of Code 2023 Challenges")]
@@ -36,6 +37,7 @@ fn main() {
         day6::solve_day,
         day7::solve_day,
         day8::solve_day,
+        day9::solve_day,
     ]);
 
     let opt = Opt::from_args();
